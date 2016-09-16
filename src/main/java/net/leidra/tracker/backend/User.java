@@ -17,7 +17,7 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_role")
-    private Role role;
+    private Role role = Role.create(Role.RoleDefinition.CENTRO);
     private String password;
     private String username;
     private boolean enabled;
