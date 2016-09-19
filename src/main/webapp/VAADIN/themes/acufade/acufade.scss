@@ -41,6 +41,18 @@
 			}
 		}
 	}
+	.form-container {
+		padding:2rem;
+		.username-container,
+		.password-container,
+		.enabled-container,
+		.role-container {
+			margin: 0.5rem;
+		}
+		.v-button {
+			margin-right:0.5rem;
+		}
+	}
 }
 
 @include acufade;

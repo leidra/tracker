@@ -45,9 +45,8 @@
             <artifactId>h2</artifactId>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-test</artifactId>-->
-            <!--<scope>test</scope>-->
+            <!--<groupId>mysql</groupId>-->
+            <!--<artifactId>mysql-connector-java</artifactId>-->
         <!--</dependency>-->
         <dependency>
             <groupId>com.vaadin</groupId>
@@ -58,18 +57,7 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-server</artifactId>
             <version>${version.vaadin}</version>
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>com.vaadin</groupId>-->
-                    <!--<artifactId>vaadin-sass-compiler</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.peimari</groupId>-->
-            <!--<artifactId>dawn</artifactId>-->
-            <!--<version>11</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -79,11 +67,6 @@
             <artifactId>viritin</artifactId>
             <version>1.56</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.vaadin.teemu</groupId>-->
-            <!--<artifactId>switch</artifactId>-->
-            <!--<version>2.0.2</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-shared-deps</artifactId>
@@ -95,14 +78,7 @@
             <artifactId>vaadin-themes</artifactId>
             <version>${version.vaadin}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.vaadin</groupId>-->
-            <!--<artifactId>vaadin-sass-compiler</artifactId>-->
-            <!--<version>${version.vaadin}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
     </dependencies>
-
     <build>
         <resources>
             <resource>
@@ -118,7 +94,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <jvmArguments>
-                        -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
+                         -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
                     </jvmArguments>
                 </configuration>
             </plugin>

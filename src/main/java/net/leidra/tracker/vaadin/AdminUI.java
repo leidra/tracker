@@ -22,8 +22,10 @@ import net.leidra.tracker.backend.Assistance;
 import net.leidra.tracker.backend.User;
 import net.leidra.tracker.backend.UserRepository;
 import net.leidra.tracker.backend.Role;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vaadin.viritin.button.ConfirmButton;
 import org.vaadin.viritin.button.MButton;
 
@@ -44,8 +46,12 @@ import java.util.stream.Collectors;
 public class AdminUI extends UI {
 	private static final long serialVersionUID = 1L;
 
-	@Autowired
+    @Autowired
     private UserRepository repo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private User editingUser;
 
     private Grid list = new Grid(new BeanItemContainer<User>(User.class));
 
@@ -244,17 +250,29 @@ public class AdminUI extends UI {
 
     protected void edit(final User user) {
         if(UI.getCurrent().getWindows().isEmpty()) {
+            editingUser = new User();
+            BeanUtils.copyProperties(user, editingUser);
             UserEntryForm userForm = new UserEntryForm(user);
-            userForm.openInModalPopup();
-            userForm.setSavedHandler(this::saveEntry);
+            userForm.setSaveHandler(this::saveEntry);
             userForm.setResetHandler(this::resetEntry);
+
+            Window popup = new Window("", userForm);
+            popup.setModal(true);
+            UI.getCurrent().addWindow(popup);
         }
     }
 
-    public void saveEntry(User entry) {
+    public void saveEntry(User user) {
+        User entry = user;
         if(entry.getId() == null && repo.findByUserName(entry.getUsername()) != null) {
             Notification.show("El usuario ya existe. Introduzca un nombre de usuario distinto", Notification.Type.ERROR_MESSAGE);
         } else {
+            if(entry.getId() == null
+            || (editingUser != null
+                && !editingUser.getPassword().equals(entry.getPassword()))) {
+                entry.setPassword(passwordEncoder.encode(entry.getPassword()));
+                editingUser = null;
+            }
             repo.save(entry);
             listEntities();
             closeWindow();
@@ -267,12 +285,13 @@ public class AdminUI extends UI {
 
     protected void closeWindow() {
         getWindows().stream().forEach(w -> {
-            User user = ((UserEntryForm) w.getContent()).getEntity();
+            User user = ((UserEntryForm) w.getContent()).getUser();
             if(list.getContainerDataSource().containsId(user)) {
                 list.select(user);
             }
             removeWindow(w);
         });
+        editingUser=null;
     }
 
 }

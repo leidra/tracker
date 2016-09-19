@@ -21,6 +21,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.vaadin.viritin.button.MButton;
@@ -67,7 +68,11 @@ public class LoginUI extends UI {
         user.setUsername(loginForm.username.getValue());
         user.setPassword(loginForm.password.getValue());
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-        SecurityContextHolder.getContext().setAuthentication(daoAuthenticationProvider.authenticate(auth));
+        try {
+            SecurityContextHolder.getContext().setAuthentication(daoAuthenticationProvider.authenticate(auth));
+        } catch(AuthenticationException ex) {
+            Notification.show("Acceso no permitido, compuebe sus credenciales.");
+        }
 
         if(SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             user = repo.findByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
