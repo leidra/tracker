@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  *
  */
 @Title("Gestión de asistencias")
-@Theme("acufade")
+@Theme("tracker")
 @SpringUI(path = "/admin")
 public class AdminUI extends UI {
 	private static final long serialVersionUID = 1L;

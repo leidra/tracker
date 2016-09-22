@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Title("Gestión de asistencias")
-@Theme("acufade")
+@Theme("tracker")
 @SpringUI(path = "/user")
 public class UserUI extends UI {
 	private static final long serialVersionUID = 1L;

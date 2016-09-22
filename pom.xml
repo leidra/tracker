@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.spring</groupId>
-    <artifactId>acufade-tracker</artifactId>
+    <artifactId>tracker</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <description>Acufade - Gestión de asistencias</description>
