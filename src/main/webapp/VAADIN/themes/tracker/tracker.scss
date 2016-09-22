@@ -1,6 +1,6 @@
 @import "../valo/valo";
 
-@mixin acufade {
+@mixin tracker {
 	@include valo;
 
 	.main-container {
@@ -10,8 +10,9 @@
 		overflow:auto;
 
 		.header {
-			background-image: url('images/acufade-logo-260.jpg');
+			background-image: url('images/logo.jpg');
 			background-repeat:no-repeat;
+			background-size:7%;
 			height:6rem;
 			width:100%;
 			.title {
@@ -55,4 +56,4 @@
 	}
 }
 
-@include acufade;
+@include tracker;
