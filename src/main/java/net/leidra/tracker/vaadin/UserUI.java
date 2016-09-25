@@ -1,15 +1,14 @@
 package net.leidra.tracker.vaadin;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import net.leidra.tracker.backend.Assistance;
-import net.leidra.tracker.backend.Role;
-import net.leidra.tracker.backend.User;
-import net.leidra.tracker.backend.UserRepository;
+import net.leidra.tracker.backend.*;
 import net.leidra.tracker.vaadin.geolocation.Location;
 import net.leidra.tracker.vaadin.geolocation.LocationError;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.vaadin.viritin.fields.MTextField;
-import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 import java.time.LocalDateTime;
@@ -26,44 +24,65 @@ import java.util.Set;
 @Title("Gestión de asistencias")
 @Theme("tracker")
 @SpringUI(path = "/user")
-public class UserUI extends UI {
+@Push(transport = Transport.LONG_POLLING)
+public class UserUI extends UI implements Broadcaster.BroadcastListener {
 	private static final long serialVersionUID = 1L;
 
-    MTextField patientName = new MTextField();
-    Button locationButton = new Button();
-    Button logoutButton;
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private MTextField patientName = new MTextField();
+    private Button locationButton = new Button();
+    private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private Location locationExtension;
+    private boolean askingForLocation = false;
 
     @Autowired
     private UserRepository userRepository;
+    private User user;
 
     @Override
     protected void init(VaadinRequest request) {
-        User user = userRepository.findByUserName(authentication.getName());
-        Set<Assistance> assistanceSet = user.getAssistances();
-        Assistance lastAssistance = assistanceSet.iterator().next();
-        locationButton.setCaption(lastAssistance.getType() == Assistance.Type.START ? "Finalizar"
-                            : lastAssistance.getType() == Assistance.Type.END ? "Comenzar" : "Comenzar");
+        Broadcaster.register(this);
+        createUI();
+    }
 
-        Button logoutButton = createLogoutButton();
-        MHorizontalLayout toolbar = createToolbar(logoutButton);
+    private void createUI() {
+        createLocator();
+        this.user = userRepository.findByUserName(authentication.getName());
+        Assistance lastAssistance = adjustFormState();
 
         Panel container = new Panel();
         container.addStyleName(ValoTheme.PANEL_BORDERLESS);
         container.setSizeUndefined();
         patientName.setCaption("Paciente");
-        patientName.setVisible(Role.RoleDefinition.DOMICILIO.equals(user.getRole().getRol()) && !Assistance.Type.START.equals(lastAssistance.getType()));
         if(lastAssistance.getType() == Assistance.Type.START) {
             patientName.setValue(lastAssistance.getPatientName());
         }
         container.setContent(new VerticalLayout(patientName, locationButton));
-        MVerticalLayout layout = createContainer(toolbar, container);
+        MVerticalLayout layout = createContainer(container);
+        locationButton.addClickListener(e -> {
+            locationExtension.requestLocation();
+        });
+        setContent(layout);
+    }
 
-        Location locationExtension = new Location(UI.getCurrent());
+    private Assistance adjustFormState() {
+        Set<Assistance> assistanceSet = user.getAssistances();
+        Assistance lastAssistance = assistanceSet.iterator().next();
+        locationButton.setCaption(lastAssistance.getType() == Assistance.Type.START ? "Finalizar"
+                : lastAssistance.getType() == Assistance.Type.END ? "Comenzar" : "Comenzar");
+        patientName.setVisible(Role.RoleDefinition.DOMICILIO.equals(user.getRole().getRol()) && !Assistance.Type.START.equals(lastAssistance.getType()));
+        return lastAssistance;
+    }
+
+    private void createLocator() {
+        locationExtension = new Location(getCurrent());
         locationExtension.addLocationListener(new Location.LocationListener() {
             @Override
             public void onLocationFound(double latitude, double longitude, double accuracy) {
-                save(new LocationVO(latitude, longitude, accuracy));
+                boolean refresh = !askingForLocation;
+                user = save(new LocationVO(latitude, longitude, accuracy));
+                if(refresh) {
+                    getPage().setLocation(getPage().getLocation());
+                }
             }
 
             @Override
@@ -76,29 +95,20 @@ public class UserUI extends UI {
                 Notification.show("Geolocalización no soportada");
             }
         });
-        locationButton.addClickListener(e -> locationExtension.requestLocation());
-        setContent(layout);
     }
 
-    private MVerticalLayout createContainer(MHorizontalLayout toolbar, Panel container) {
-        MVerticalLayout layout = new MVerticalLayout(toolbar, container);
+    @Override
+    public void detach() {
+        Broadcaster.unregister(this);
+        super.detach();
+    }
+
+    private MVerticalLayout createContainer(Panel container) {
+        MVerticalLayout layout = new MVerticalLayout(container);
         layout.setComponentAlignment(container, Alignment.MIDDLE_CENTER);
         layout.setHeight("70%");
         setContent(layout);
         return layout;
-    }
-
-    private MHorizontalLayout createToolbar(Button logoutButton) {
-        MHorizontalLayout toolbar = new MHorizontalLayout(logoutButton);
-        toolbar.setWidth("100%");
-        toolbar.setComponentAlignment(logoutButton, Alignment.MIDDLE_RIGHT);
-        return toolbar;
-    }
-
-    private Button createLogoutButton() {
-        logoutButton = new Button("Salir");
-        logoutButton.addClickListener(e -> logout());
-        return logoutButton;
     }
 
     private void logout() {
@@ -107,24 +117,26 @@ public class UserUI extends UI {
         getPage().setLocation("/login");
     }
 
-    private void save(LocationVO locationVO) {
-        User user = userRepository.findByUserName(authentication.getName());
+    private User save(LocationVO locationVO) {
         if(Role.RoleDefinition.CENTRO.equals(user.getRole().getRol())
-        || (Role.RoleDefinition.DOMICILIO.equals(user.getRole().getRol())
-        && StringUtils.isNotBlank(patientName.getValue()))) {
+        || (askingForLocation || (Role.RoleDefinition.DOMICILIO.equals(user.getRole().getRol())
+        && StringUtils.isNotBlank(patientName.getValue())))) {
             Assistance assistance = createAssistance(locationVO, user);
             user.getAssistances().add(assistance);
 
-            userRepository.save(user);
-            logout();
+            return userRepository.save(user);
         } else {
             Notification.show("Debe proporcionar el nombre del paciente", Notification.Type.ERROR_MESSAGE);
         }
+        return user;
     }
 
     private Assistance createAssistance(LocationVO locationVO, User user) {
         Assistance assistance = new Assistance();
-        if(user.getAssistances().isEmpty()) {
+        if(askingForLocation) {
+            askingForLocation = false;
+            assistance.setType(Assistance.Type.LOCATION);
+        } else if(user.getAssistances().isEmpty()) {
             assistance.setType(Assistance.Type.START);
         } else if(user.getAssistances().iterator().next().getType() == Assistance.Type.START) {
             assistance.setType(Assistance.Type.END);
@@ -139,5 +151,17 @@ public class UserUI extends UI {
         assistance.setLongitude("" + locationVO.getLongitude());
         assistance.setTime(LocalDateTime.now());
         return assistance;
+    }
+
+    @Override
+    public void receiveBroadcast() {
+        access(() -> {
+            askingForLocation = true;
+            locationExtension.requestLocation();
+        });
+    }
+
+    public String getUserName() {
+        return user.getUsername();
     }
 }

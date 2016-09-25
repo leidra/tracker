@@ -6,6 +6,7 @@
     <groupId>io.spring</groupId>
     <artifactId>tracker</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <description>Acufade - Gestión de asistencias</description>
     
@@ -76,6 +77,11 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-themes</artifactId>
+            <version>${version.vaadin}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-push</artifactId>
             <version>${version.vaadin}</version>
         </dependency>
     </dependencies>

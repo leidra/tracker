@@ -53,6 +53,16 @@
 		.v-button {
 			margin-right:0.5rem;
 		}
+		.assistances-header {
+			.v-grid-header {
+				.v-grid-row {
+					.grid-cell {
+						background-color: #bfbfbf;
+						background-image:none;
+					}
+				}
+			}
+		}
 	}
 }
 

@@ -1,5 +1,6 @@
 package net.leidra.tracker.vaadin;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.data.Property;
@@ -12,16 +13,15 @@ import com.vaadin.data.util.filter.SimpleStringFilter;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.*;
+import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
-import net.leidra.tracker.backend.Assistance;
-import net.leidra.tracker.backend.User;
-import net.leidra.tracker.backend.UserRepository;
-import net.leidra.tracker.backend.Role;
+import net.leidra.tracker.backend.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,12 +37,10 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- *
- */
 @Title("Gestión de asistencias")
 @Theme("tracker")
 @SpringUI(path = "/admin")
+@Push(value = PushMode.MANUAL, transport = Transport.LONG_POLLING)
 public class AdminUI extends UI {
 	private static final long serialVersionUID = 1L;
 
@@ -59,6 +57,7 @@ public class AdminUI extends UI {
     private Button edit = new MButton("Editar", this::edit);
     private Button delete = new ConfirmButton("Borrar", "¿Está seguro de borrar este usuario?", this::remove);
     private Button refresh = new MButton("Actualizar", this::refresh);
+    private Button location = new MButton("Solicitar ubicación", this::location);
 
     @Override
     protected void init(VaadinRequest request) {
@@ -71,7 +70,7 @@ public class AdminUI extends UI {
             getPage().setLocation("/login");
         });
 
-        CssLayout innerButtons = new CssLayout(addNew, edit, delete, refresh);
+        CssLayout innerButtons = new CssLayout(addNew, edit, delete, refresh, location);
         innerButtons.addStyleName("action-buttons");
         CssLayout toolbar = new CssLayout(innerButtons, logoutButton);
         toolbar.addStyleName("toolbar");
@@ -149,7 +148,7 @@ public class AdminUI extends UI {
 
             @Override
             public String convertToPresentation(Assistance.Type type, Class<? extends String> aClass, Locale locale) throws ConversionException {
-                return type.equals(Assistance.Type.START) ? "Entrada" : "Salida";
+                return type.toString();
             }
 
             @Override
@@ -168,6 +167,7 @@ public class AdminUI extends UI {
         assistances.setHeightByRows(assistances.getContainerDataSource().size() > 0 ? assistances.getContainerDataSource().size() : 5);
 
         Grid.HeaderRow headerRow = assistances.getDefaultHeaderRow();
+        headerRow.setStyleName("assistances-header");
         DateField dateField = new DateField();
         dateField.addStyleName("column-filter");
         dateField.setImmediate(true);
@@ -220,11 +220,12 @@ public class AdminUI extends UI {
         boolean hasSelection = list.getSelectedRow() != null;
         edit.setEnabled(hasSelection);
         delete.setEnabled(hasSelection);
+        location.setEnabled(hasSelection);
     }
 
     private void listEntities() {
         list.getContainerDataSource().removeAllItems();
-        repo.findAll().stream().forEach(i -> list.getContainerDataSource().addItem(i));
+        repo.findAll().stream().forEach(list.getContainerDataSource()::addItem);
         adjustActionButtonState();
         list.clearSortOrder();
     }
@@ -291,9 +292,19 @@ public class AdminUI extends UI {
             }
             removeWindow(w);
         });
-        editingUser=null;
+        editingUser = null;
     }
 
+    private void location(ClickEvent clickEvent) {
+        User user = (User)list.getSelectedRow();
+        if(user != null && Role.RoleDefinition.DOMICILIO.equals(user.getRole().getRol())) {
+            access(() -> {
+                Broadcaster.broadcast(user);
+                push();
+                Notification.show("Ubicación solicitada");
+            });
+        }
+    }
 }
 
 class String2LocalDateTimeConverter implements Converter<String, LocalDateTime> {
