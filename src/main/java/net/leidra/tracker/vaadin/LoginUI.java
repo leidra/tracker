@@ -5,15 +5,13 @@ import com.vaadin.annotations.Title;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import net.leidra.tracker.backend.Assistance;
-import net.leidra.tracker.backend.Role;
-import net.leidra.tracker.backend.User;
-import net.leidra.tracker.backend.UserRepository;
+import net.leidra.tracker.backend.*;
 import net.leidra.tracker.vaadin.geolocation.Location;
 import net.leidra.tracker.vaadin.geolocation.LocationError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +81,8 @@ public class LoginUI extends UI {
                 repo.save(user);
                 page = "user";
             }
+
+            VaadinSession.getCurrent().setAttribute("user", user.getUsername());
             //redirect to main application
             getPage().setLocation("/" + page);
         }
@@ -145,6 +145,7 @@ class LoginForm extends CssLayout {
     public void setLoginHandler(Consumer handler) {
         this.loginHandler = handler;
     }
+
 }
 
 class LocationVO {
@@ -167,4 +168,5 @@ class LocationVO {
     public Double getAccuracy() {
         return accuracy;
     }
+
 }

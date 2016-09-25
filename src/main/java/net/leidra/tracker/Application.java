@@ -11,12 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -25,6 +27,7 @@ import javax.annotation.Resource;
 @EnableJpaRepositories
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class Application extends WebSecurityConfigurerAdapter {
     @Resource(name = "authService")
     private UserDetailsService userDetailsService;
@@ -36,13 +39,15 @@ public class Application extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
+//                .addFilter(new SecurityContextPersistenceFilter())
                 .exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")).accessDeniedPage("/accessDenied")
                 .and().authorizeRequests()
                 .antMatchers("/VAADIN/**", "/PUSH/**", "/UIDL/**", "/login", "/login/**", "/error/**", "/accessDenied/**", "/vaadinServlet/**").permitAll()
                 .antMatchers("/user", "/**").hasAnyAuthority(Role.RoleDefinition.CENTRO.toString(),
                                                             Role.RoleDefinition.DOMICILIO.toString(),
                                                             Role.RoleDefinition.ADMIN.toString())
-                .antMatchers("/admin", "/**").hasAuthority(Role.RoleDefinition.ADMIN.toString());
+                .antMatchers("/admin", "/**").hasAuthority(Role.RoleDefinition.ADMIN.toString())
+        ;//.and().sessionManagement().sessionFixation().newSession();
     }
 
     @Bean

@@ -11,8 +11,19 @@ import java.time.LocalDateTime;
 @Entity
 public class Assistance {
     public enum Type {
-        START, END, LOGIN
-    };
+        START("Entrada"), END("Salida"), LOGIN("Acceso"), LOCATION("ubicación");
+        private String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
