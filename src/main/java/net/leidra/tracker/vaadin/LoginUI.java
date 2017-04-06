@@ -7,10 +7,9 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.*;
+import com.vaadin.v7.ui.PasswordField;
+import com.vaadin.v7.ui.TextField;
 import net.leidra.tracker.backend.*;
 import net.leidra.tracker.vaadin.geolocation.Location;
 import net.leidra.tracker.vaadin.geolocation.LocationError;
@@ -22,12 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.vaadin.viritin.button.MButton;
-import org.vaadin.viritin.fields.MPasswordField;
-import org.vaadin.viritin.fields.MTextField;
-import org.vaadin.viritin.layouts.MFormLayout;
-import org.vaadin.viritin.layouts.MVerticalLayout;
-
 import java.util.function.Consumer;
 
 /**
@@ -57,7 +50,7 @@ public class LoginUI extends UI {
         try {
             authenticateUser(location);
         } catch(DisabledException e) {
-            Notification.show("Este usuario est√° deshabilitado. Contacte con el administrador");
+            Notification.show("Este usuario est· deshabilitado. Contacte con el administrador");
         }
     }
 
@@ -91,9 +84,9 @@ public class LoginUI extends UI {
 }
 
 class LoginForm extends CssLayout {
-    TextField username = new MTextField("Nombre");
-    MPasswordField password = new MPasswordField("Clave");
-    MButton loginButton = new MButton("Acceder");
+    TextField username = new TextField("Nombre");
+    PasswordField password = new PasswordField("Clave");
+    Button loginButton = new Button("Acceder");
     Location locationExtension;
     Consumer loginHandler;
 
@@ -107,12 +100,12 @@ class LoginForm extends CssLayout {
 
             @Override
             public void onLocationError(LocationError error) {
-                Notification.show("Debe habilitar la geolocalizaci√≥n en el navegador para poder acceder");
+                Notification.show("Debe habilitar la geolocalizaciÛn en el navegador para poder acceder");
             }
 
             @Override
             public void onLocationNotSupported() {
-                Notification.show("El navegador no soporta geolocalizaci√≥n. No puede utilizar la aplicaci√≥n");
+                Notification.show("El navegador no soporta geolocalizaciÛn. No puede utilizar la aplicaciÛn");
             }
         });
         username.addShortcutListener(new ShortcutListener("", ShortcutAction.KeyCode.ENTER, null) {
@@ -134,12 +127,9 @@ class LoginForm extends CssLayout {
 
     protected void createContent() {
         username.focus();
-        addComponent(new MVerticalLayout(
-                new MFormLayout(
-                        username,
-                        password,
-                        loginButton
-                ).withWidth("")).withWidth(""));
+        VerticalLayout containerLayout = new VerticalLayout();
+        containerLayout.addComponentsAndExpand(username, password, loginButton);
+        addComponent(containerLayout);
     }
 
     public void setLoginHandler(Consumer handler) {

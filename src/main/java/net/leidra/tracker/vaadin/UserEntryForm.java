@@ -1,20 +1,22 @@
 package net.leidra.tracker.vaadin;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.*;
 import net.leidra.tracker.backend.Role;
 import net.leidra.tracker.backend.User;
-import org.vaadin.viritin.fields.MPasswordField;
-import org.vaadin.viritin.fields.MTextField;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class UserEntryForm extends CustomComponent {
-    private TextField username = new MTextField("Nombre");
-    private MPasswordField password = new MPasswordField("Clave");
+    private TextField username = new TextField("Nombre");
+    private PasswordField password = new PasswordField("Clave");
     private CheckBox enabled = new CheckBox("Habilitado");
     private ComboBox role = new ComboBox("Rol");
 

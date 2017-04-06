@@ -8,27 +8,26 @@ import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.ui.TextField;
 import net.leidra.tracker.backend.*;
 import net.leidra.tracker.vaadin.geolocation.Location;
 import net.leidra.tracker.vaadin.geolocation.LocationError;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.vaadin.viritin.fields.MTextField;
-import org.vaadin.viritin.layouts.MVerticalLayout;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Title("Gestión de asistencias")
+@Title("Gesti�n de asistencias")
 @Theme("tracker")
 @SpringUI(path = "/user")
 @Push(transport = Transport.LONG_POLLING)
 public class UserUI extends UI implements Broadcaster.BroadcastListener {
 	private static final long serialVersionUID = 1L;
 
-    private MTextField patientName = new MTextField();
+    private TextField patientName = new TextField();
     private Button locationButton = new Button();
     private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     private Location locationExtension;
@@ -57,7 +56,7 @@ public class UserUI extends UI implements Broadcaster.BroadcastListener {
             patientName.setValue(lastAssistance.getPatientName());
         }
         container.setContent(new VerticalLayout(patientName, locationButton));
-        MVerticalLayout layout = createContainer(container);
+        VerticalLayout layout = createContainer(container);
         locationButton.addClickListener(e -> {
             locationExtension.requestLocation();
         });
@@ -92,7 +91,7 @@ public class UserUI extends UI implements Broadcaster.BroadcastListener {
 
             @Override
             public void onLocationNotSupported() {
-                Notification.show("Geolocalización no soportada");
+                Notification.show("Geolocalizaci?n no soportada");
             }
         });
     }
@@ -103,8 +102,8 @@ public class UserUI extends UI implements Broadcaster.BroadcastListener {
         super.detach();
     }
 
-    private MVerticalLayout createContainer(Panel container) {
-        MVerticalLayout layout = new MVerticalLayout(container);
+    private VerticalLayout createContainer(Panel container) {
+        VerticalLayout layout = new VerticalLayout(container);
         layout.setComponentAlignment(container, Alignment.MIDDLE_CENTER);
         layout.setHeight("70%");
         setContent(layout);
@@ -120,7 +119,7 @@ public class UserUI extends UI implements Broadcaster.BroadcastListener {
     private User save(LocationVO locationVO) {
         if(Role.RoleDefinition.CENTRO.equals(user.getRole().getRol())
         || (askingForLocation || (Role.RoleDefinition.DOMICILIO.equals(user.getRole().getRol())
-        && StringUtils.isNotBlank(patientName.getValue())))) {
+        && StringUtils.hasText(patientName.getValue())))) {
             Assistance assistance = createAssistance(locationVO, user);
             user.getAssistances().add(assistance);
 

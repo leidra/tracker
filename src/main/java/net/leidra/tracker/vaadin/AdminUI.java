@@ -3,31 +3,34 @@ package net.leidra.tracker.vaadin;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.data.Property;
-import com.vaadin.data.sort.Sort;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.converter.Converter;
-import com.vaadin.data.util.converter.StringToBooleanConverter;
-import com.vaadin.data.util.filter.Between;
-import com.vaadin.data.util.filter.SimpleStringFilter;
-import com.vaadin.event.FieldEvents;
-import com.vaadin.event.ItemClickEvent;
+import com.vaadin.ui.*;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.sort.Sort;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.data.util.converter.StringToBooleanConverter;
+import com.vaadin.v7.data.util.filter.Between;
+import com.vaadin.v7.data.util.filter.SimpleStringFilter;
+import com.vaadin.v7.event.FieldEvents;
+import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.server.*;
 import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.shared.ui.grid.HeightMode;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.v7.shared.ui.grid.HeightMode;
+import com.vaadin.v7.shared.ui.label.ContentMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.TextField;
 import net.leidra.tracker.backend.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.vaadin.viritin.button.ConfirmButton;
-import org.vaadin.viritin.button.MButton;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -53,11 +56,11 @@ public class AdminUI extends UI {
 
     private Grid list = new Grid(new BeanItemContainer<User>(User.class));
 
-    private Button addNew = new MButton("Añadir", this::add);
-    private Button edit = new MButton("Editar", this::edit);
-    private Button delete = new ConfirmButton("Borrar", "¿Está seguro de borrar este usuario?", this::remove);
-    private Button refresh = new MButton("Actualizar", this::refresh);
-    private Button location = new MButton("Solicitar ubicación", this::location);
+    private Button addNew = new Button("Añadir", this::add);
+    private Button edit = new Button("Editar", this::edit);
+    private Button delete = new Button("Borrar", this::remove);
+    private Button refresh = new Button("Actualizar", this::refresh);
+    private Button location = new Button("Solicitar ubicación", this::location);
 
     @Override
     protected void init(VaadinRequest request) {
@@ -244,9 +247,12 @@ public class AdminUI extends UI {
     }
 
     public void remove(ClickEvent e) {
-        repo.delete((User)list.getSelectedRow());
-        list.select(null);
-        listEntities();
+        ConfirmDialog.show(getUI(), "Borrar usuario", "¿Está seguro de borrar este usuario?",
+                "Sí", "No", ()-> {
+            repo.delete((User)list.getSelectedRow());
+            list.select(null);
+            listEntities();
+        });
     }
 
     protected void edit(final User user) {
