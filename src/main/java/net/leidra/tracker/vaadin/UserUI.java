@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Title("Gestión de asistencias")
-@Theme("tracker")
+@Theme("acufade")
 @SpringUI(path = "/user")
 @Push(transport = Transport.LONG_POLLING)
 public class UserUI extends UI implements Broadcaster.BroadcastListener {

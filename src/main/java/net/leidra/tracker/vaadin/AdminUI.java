@@ -33,15 +33,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Title("Gestión de asistencias")
-@Theme("tracker")
+@Theme("acufade")
 @SpringUI(path = "/admin")
 @Push(value = PushMode.MANUAL, transport = Transport.LONG_POLLING)
 public class AdminUI extends UI {
@@ -137,9 +139,14 @@ public class AdminUI extends UI {
     private Grid createAssitancesGrid(User user) {
         Set<Assistance> assistanceSet = user.getAssistances().stream()
                 .filter(a -> null != a.getTime())
-                .sorted((o1, o2) -> o1.getTime().compareTo(o2.getTime()))
+                .sorted(Comparator.comparing(Assistance::getTime))
+                .reduce((assistance, assistance2) -> Assistance.Type.END.equals(assistance.getType()) ?
+                        Period.between(assistance.getTime()).
+                        : 0)
                 .collect(Collectors.toSet());
-        Grid assistances = new Grid(new BeanItemContainer<Assistance>(Assistance.class, assistanceSet));
+
+
+        Grid assistances = new Grid(new BeanItemContainer<>(Assistance.class, assistanceSet));
         assistances.setColumns("patientName", "type", "time");
         assistances.setSortOrder(Sort.by("time", SortDirection.DESCENDING).build());
         assistances.getColumn("patientName").setHeaderCaption("Paciente");

@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  */
 @SpringUI(path = "/login")
 @Title("LoginPage")
-@Theme("valo")
+@Theme("acufade")
 public class LoginUI extends UI {
     private LoginForm loginForm;
     @Autowired
