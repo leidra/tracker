@@ -1,17 +1,24 @@
 package net.leidra.tracker.backend;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 /**
  * Created by afuentes on 4/09/16.
  */
 @Entity
 public class Assistance {
+
+    public static final int HOUR_IN_MINUTES = 60;
+
     public enum Type {
-        START("Entrada"), END("Salida"), LOGIN("Acceso"), LOCATION("ubicación");
+        ASSISTANCE("Asistencia"), LOGIN("Acceso"), LOCATION("Ubicación");
         private String name;
 
         Type(String name) {
@@ -34,7 +41,8 @@ public class Assistance {
     private String longitude;
     private String patientName;
     private double accuracy;
-    private LocalDateTime time;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private Type type;
 
     public Assistance() {
@@ -45,6 +53,14 @@ public class Assistance {
         this.longitude = longitude;
         this.accuracy = accuracy;
         this.type = type;
+    }
+
+    public Assistance(String latitude, String longitude, Double accuracy, Type type, LocalDateTime start) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.accuracy = accuracy;
+        this.type = type;
+        this.start = start;
     }
 
     public long getId() {
@@ -79,12 +95,12 @@ public class Assistance {
         this.accuracy = accuracy;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public LocalDateTime getStart() {
+        return start;
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = time;
+    public void setStart(LocalDateTime start) {
+        this.start = start;
     }
 
     public Type getType() {
@@ -101,5 +117,24 @@ public class Assistance {
 
     public void setPatientName(String patientName) {
         this.patientName = patientName;
+    }
+
+    public LocalDateTime getEnd() {
+        return end;
+    }
+
+    public void setEnd(LocalDateTime end) {
+        this.end = end;
+    }
+
+    public String getDuration() {
+        if(getStart() != null && getEnd() != null) {
+            Duration duration = Duration.between(getStart(), getEnd());
+            long hours = duration.toHours();
+            long minutes = duration.toMinutes() > HOUR_IN_MINUTES ? (duration.toMinutes() - (HOUR_IN_MINUTES * hours)) : duration.toMinutes();
+            return hours + " horas " + minutes + " minutos";
+        }
+
+        return Type.ASSISTANCE.equals(getType()) ? "En curso" : StringUtils.EMPTY;
     }
 }

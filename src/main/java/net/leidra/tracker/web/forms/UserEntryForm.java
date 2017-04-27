@@ -1,15 +1,15 @@
-package net.leidra.tracker.vaadin;
+package net.leidra.tracker.web.forms;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
 import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.ui.*;
 import net.leidra.tracker.backend.Role;
 import net.leidra.tracker.backend.User;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -25,7 +25,7 @@ public class UserEntryForm extends CustomComponent {
     private Consumer<User> saveHandler;
     private Consumer<User> resetHandler;
 
-    UserEntryForm(User user) {
+    public UserEntryForm(User user) {
         super();
         this.user = user;
         VerticalLayout container = new VerticalLayout();
@@ -35,33 +35,19 @@ public class UserEntryForm extends CustomComponent {
     }
 
     protected void createContent(VerticalLayout container) {
-        role.setContainerDataSource(new BeanItemContainer<>(Role.class, Arrays.asList(
-                Role.create(Role.RoleDefinition.ADMIN),
-                Role.create(Role.RoleDefinition.CENTRO),
-                Role.create(Role.RoleDefinition.DOMICILIO))));
-        role.setNullSelectionAllowed(false);
-        role.setNewItemsAllowed(false);
-        role.setTextInputAllowed(false);
-
         final BeanFieldGroup<User> fieldGroup = new BeanFieldGroup<>(User.class);
         fieldGroup.setItemDataSource(user);
         fieldGroup.bindMemberFields(this);
         fieldGroup.setBuffered(true);
 
-        HorizontalLayout usernameContainer = new HorizontalLayout(username);
-        usernameContainer.addStyleName("username-container");
-        HorizontalLayout passwordContainer = new HorizontalLayout(password);
-        passwordContainer.addStyleName("password-container");
-        HorizontalLayout enabledContainer = new HorizontalLayout(enabled);
-        enabledContainer.addStyleName("enabled-container");
-        HorizontalLayout roleContainer = new HorizontalLayout(role);
-        roleContainer.addStyleName("role-container");
+        createUserNameField(container);
+        createPasswordField(container);
+        createEnabledField(container);
+        createRoleField(container);
+        createButtons(container, fieldGroup);
+    }
 
-        container.addComponent(usernameContainer);
-        container.addComponent(passwordContainer);
-        container.addComponent(enabledContainer);
-        container.addComponent(roleContainer);
-
+    private void createButtons(VerticalLayout container, BeanFieldGroup<User> fieldGroup) {
         Button save = new Button("Guardar");
         save.addClickListener(e -> {
             try {
@@ -76,6 +62,45 @@ public class UserEntryForm extends CustomComponent {
         save.addClickListener(e -> fieldGroup.discard());
 
         container.addComponent(new HorizontalLayout(save, reset));
+    }
+
+    private HorizontalLayout createUserNameField(VerticalLayout container) {
+        HorizontalLayout usernameContainer = new HorizontalLayout(username);
+        usernameContainer.addStyleName("username-container");
+        container.addComponent(usernameContainer);
+        username.setNullRepresentation(StringUtils.EMPTY);
+        return usernameContainer;
+    }
+
+    private HorizontalLayout createPasswordField(VerticalLayout container) {
+        HorizontalLayout passwordContainer = new HorizontalLayout(password);
+        passwordContainer.addStyleName("password-container");
+        container.addComponent(passwordContainer);
+        password.setNullRepresentation(StringUtils.EMPTY);
+        return passwordContainer;
+    }
+
+    private HorizontalLayout createEnabledField(VerticalLayout container) {
+        HorizontalLayout enabledContainer = new HorizontalLayout(enabled);
+        enabledContainer.addStyleName("enabled-container");
+        container.addComponent(enabledContainer);
+        return enabledContainer;
+    }
+
+    private void createRoleField(VerticalLayout container) {
+        role.setContainerDataSource(new BeanItemContainer<>(Role.class, Arrays.asList(
+                Role.create(Role.RoleDefinition.ADMIN),
+                Role.create(Role.RoleDefinition.CENTRO),
+                Role.create(Role.RoleDefinition.DOMICILIO))));
+        role.setNullSelectionAllowed(false);
+        role.setNewItemsAllowed(false);
+        role.setTextInputAllowed(false);
+        role.select(role.getContainerDataSource().getItemIds().iterator().next());
+
+        role.setValue(Role.create(Role.RoleDefinition.CENTRO));
+        HorizontalLayout roleContainer = new HorizontalLayout(role);
+        roleContainer.addStyleName("role-container");
+        container.addComponent(roleContainer);
     }
 
     public Consumer<User> getSaveHandler() {

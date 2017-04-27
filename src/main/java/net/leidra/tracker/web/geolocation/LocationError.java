@@ -1,4 +1,4 @@
-package net.leidra.tracker.vaadin.geolocation;
+package net.leidra.tracker.web.geolocation;
 
 /**
  * Created by andyphillips404 on 6/9/15.

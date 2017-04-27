@@ -1,9 +1,8 @@
-package net.leidra.tracker.vaadin.geolocation;
+package net.leidra.tracker.web.geolocation;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
 import com.vaadin.ui.*;
-import elemental.json.JsonArray;
 
 import java.util.HashSet;
 
@@ -14,7 +13,6 @@ import java.util.HashSet;
 public class Location extends AbstractJavaScriptExtension {
 
     private Boolean isLocationSupported = null;
-
 
     public interface LocationListener {
         void onLocationFound(double latitude, double longitude, double accuracy);
@@ -37,40 +35,29 @@ public class Location extends AbstractJavaScriptExtension {
     public Location(UI ui) {
         extend(ui);
 
-        addFunction("onLocationFound", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
-                for (LocationListener locationListener : locationListeners) {
-                    locationListener.onLocationFound(arguments.getNumber(0), arguments.getNumber(1), arguments.getNumber(2));
-                }
+        addFunction("onLocationFound", (JavaScriptFunction) arguments -> {
+            for (LocationListener locationListener : locationListeners) {
+                locationListener.onLocationFound(arguments.getNumber(0), arguments.getNumber(1), arguments.getNumber(2));
             }
         });
 
-        addFunction("onLocationError", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
-                for (LocationListener locationListener : locationListeners) {
-                    locationListener.onLocationError(LocationError.getErrorForCode((int) arguments.getNumber(0)));
-                }
-
+        addFunction("onLocationError", (JavaScriptFunction) arguments -> {
+            for (LocationListener locationListener : locationListeners) {
+                locationListener.onLocationError(LocationError.getErrorForCode((int) arguments.getNumber(0)));
             }
+
         });
 
-        addFunction("onLocationNotSupported", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
-                for (LocationListener locationListener : locationListeners) {
-                    locationListener.onLocationNotSupported();
-                }
+        addFunction("onLocationNotSupported", (JavaScriptFunction) arguments -> {
+            for (LocationListener locationListener : locationListeners) {
+                locationListener.onLocationNotSupported();
             }
         });
-
 
     }
 
     public void requestLocation() {
         callFunction("location");
     }
-
 
 }

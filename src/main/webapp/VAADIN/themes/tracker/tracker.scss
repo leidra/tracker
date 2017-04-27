@@ -3,6 +3,9 @@
 @mixin tracker {
 	@include valo;
 
+    .v-app {
+        background-color:#fff;
+    }
 	.main-container {
 		width:100%;
 		height:100%;
@@ -10,9 +13,8 @@
 		overflow:auto;
 
 		.header {
-			background-image: url('images/logo.jpg');
 			background-repeat:no-repeat;
-			background-size:7%;
+			background-size:20%;
 			height:6rem;
 			width:100%;
 			.title {
@@ -63,6 +65,13 @@
 				}
 			}
 		}
+	}
+
+	.ui-container {
+        .row {
+            display:block;
+        }
+
 	}
 }
 

@@ -22,7 +22,7 @@ public class User {
     private String username;
     private boolean enabled;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("time DESC")
+    @OrderBy("start ASC")
     private Set<Assistance> assistances = new HashSet();
 
     public User() {
