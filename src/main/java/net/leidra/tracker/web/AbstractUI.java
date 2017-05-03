@@ -20,7 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Title("Gestión de asistencias")
 @Theme("acufade")
 @Push(value = PushMode.MANUAL, transport = Transport.LONG_POLLING)
-//@Widgetset("com.vaadin.v7.Vaadin7WidgetSet")
+@Widgetset("AppWidgetset")
 public abstract class AbstractUI extends UI {
 
     protected CssLayout createHeaderContainer() {
