@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * Created by afuentes on 26/04/2017.
  */
 @Title("Gestión de asistencias")
-@Theme("acufade")
+@Theme("application")
 @Push(value = PushMode.MANUAL, transport = Transport.LONG_POLLING)
 @Widgetset("AppWidgetset")
 public abstract class AbstractUI extends UI {

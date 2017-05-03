@@ -17,8 +17,7 @@ import org.springframework.security.authentication.DisabledException;
  */
 @SpringUI(path = "/login")
 @Title("LoginPage")
-@Theme("acufade")
-//@Widgetset("com.vaadin.v7.Vaadin7WidgetSet")
+@Theme("application")
 public class LoginUI extends UI {
     private LoginForm loginForm;
 
@@ -48,6 +47,4 @@ public class LoginUI extends UI {
             Notification.show("Este usuario está deshabilitado. Contacte con el administrador");
         }
     }
-
 }
-
