@@ -2,7 +2,6 @@ package net.leidra.tracker.web;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
