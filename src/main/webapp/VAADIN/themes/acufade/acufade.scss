@@ -1,7 +1,7 @@
 @import "../valo/valo";
 @import "../tracker/tracker";
 
-@mixin application {
+@mixin acufade {
 	@include tracker;
 
     .v-app {
@@ -9,10 +9,9 @@
     }
 	.main-container {
 		.header {
-			background-image: url('images/logo.jpg');
-			background-size:7%;
+			background-image: url('images/acufade-logo-260.jpg');
         }
     }
 }
 
-@include application;
+@include acufade;
