@@ -1,18 +1,9 @@
 @import "../valo/valo";
-@import "../tracker/tracker";
+@import "../acufade/acufade";
 
 @mixin application {
-	@include tracker;
+	@include acufade;
 
-    .v-app {
-        background-color:#fff;
-    }
-	.main-container {
-		.header {
-			background-image: url('images/logo.jpg');
-			background-size:7%;
-        }
-    }
 }
 
 @include application;
