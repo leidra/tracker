@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Push(transport = Transport.LONG_POLLING)
 public class UserUI extends AbstractUI implements Broadcaster.BroadcastListener {
 	private static final long serialVersionUID = 1L;
-    public final static String DOMICILIO_DESCRIPTION = "Está atendiendo al paciente {0}.<br/>";
+    public final static String DOMICILIO_DESCRIPTION = "Está atendiendo al usuario {0}.<br/>";
     public final static String START_DESCRIPTION = "Inicio a las {0} ";
 
     private Label assistanceDescription = new Label();
@@ -70,7 +70,7 @@ public class UserUI extends AbstractUI implements Broadcaster.BroadcastListener 
         Broadcaster.register(this);
         this.user = getUserPresenter().findByUserName().orElseThrow(() -> new RuntimeException());
 
-        patientName.setCaption("Paciente");
+        patientName.setCaption("Usuario");
         assistanceDescription.setContentMode(ContentMode.HTML);
         assistanceDescription.setVisible(false);
         locationManager = getUserPresenter().createLocator(this);

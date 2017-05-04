@@ -67,7 +67,7 @@ public class UserPresenter {
 
             return userRepository.save(userUi.getUser());
         } else {
-            Notification.show("Debe proporcionar el nombre del paciente", Notification.Type.ERROR_MESSAGE);
+            Notification.show("Debe proporcionar el nombre del usuario", Notification.Type.ERROR_MESSAGE);
         }
         return userUi.getUser();
     }

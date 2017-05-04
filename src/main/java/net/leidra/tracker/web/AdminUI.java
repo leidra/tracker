@@ -127,7 +127,7 @@ public class AdminUI extends AbstractUI {
         Grid assistances = new Grid(new BeanItemContainer<>(Assistance.class, assistanceSet));
         assistances.setColumns("patientName", "type", "start", "end", "duration");
         assistances.setSortOrder(Sort.by("start", SortDirection.DESCENDING).build());
-        assistances.getColumn("patientName").setHeaderCaption("Paciente");
+        assistances.getColumn("patientName").setHeaderCaption("Usuario");
         assistances.getColumn("type").setHeaderCaption("Tipo").setConverter(retrieveAssistanceTypeConvert());
         assistances.setWidth("100%");
         assistances.getColumn("start").setHeaderCaption("Entrada").setConverter(new String2LocalDateTimeConverter());
