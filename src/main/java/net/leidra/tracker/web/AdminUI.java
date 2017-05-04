@@ -15,17 +15,14 @@ import com.vaadin.v7.data.util.filter.SimpleStringFilter;
 import com.vaadin.v7.event.FieldEvents;
 import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.v7.shared.ui.grid.HeightMode;
-import com.vaadin.v7.shared.ui.label.ContentMode;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Grid;
-import com.vaadin.v7.ui.Label;
 import com.vaadin.v7.ui.TextField;
 import net.leidra.tracker.backend.*;
 import net.leidra.tracker.web.forms.UserEntryForm;
 import net.leidra.tracker.web.utils.String2LocalDateTimeConverter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -150,14 +147,23 @@ public class AdminUI extends AbstractUI {
 
         headerRow.getCell("start").setComponent(createDateFieldFilter(assistances, "start"));
         headerRow.getCell("end").setComponent(createDateFieldFilter(assistances, "end"));
+        headerRow.getCell("patientName").setComponent(createStringFilter(assistances, "patientName"));
     }
 
     private DateField createDateFieldFilter(Grid assistances, String fieldKey) {
         DateField dateField = new DateField();
         dateField.addStyleName("column-filter");
         dateField.setImmediate(true);
-        dateField.addValueChangeListener(valueChangeEvent -> filterDateTime(assistances, valueChangeEvent.getProperty().getValue(), fieldKey));
+        dateField.addValueChangeListener(valueChangeEvent -> filterField(assistances, valueChangeEvent.getProperty().getValue(), fieldKey));
         return dateField;
+    }
+
+    private TextField createStringFilter(Grid assistances, String fieldKey) {
+        TextField textField = new TextField();
+        textField.addStyleName("column-filter");
+        textField.setImmediate(true);
+        textField.addValueChangeListener(valueChangeEvent -> filterField(assistances, valueChangeEvent.getProperty().getValue(), fieldKey));
+        return textField;
     }
 
     private Converter<String, Assistance.Type> retrieveAssistanceTypeConvert() {
@@ -184,13 +190,21 @@ public class AdminUI extends AbstractUI {
         };
     }
 
-    private void filterDateTime(Grid assistances, Object value, String fieldKey) {
+    private void filterField(Grid assistances, Object value, String fieldKey) {
         BeanItemContainer<User> container = ((BeanItemContainer<User>) assistances.getContainerDataSource());
         container.removeContainerFilters(fieldKey);
         if (null != value) {
-            container.addContainerFilter(new Between(fieldKey, LocalDateTime.ofInstant(((Date) value).toInstant(), ZoneId.systemDefault()), LocalDateTime.now()));
+            addContainerFilter(value, fieldKey, container);
         }
         assistances.recalculateColumnWidths();
+    }
+
+    private void addContainerFilter(Object value, String fieldKey, BeanItemContainer<User> container) {
+        if(value instanceof Date) {
+            container.addContainerFilter(new Between(fieldKey, LocalDateTime.ofInstant(((Date)value).toInstant(), ZoneId.systemDefault()), LocalDateTime.now()));
+        } else if(value instanceof String) {
+            container.addContainerFilter(new SimpleStringFilter(fieldKey, value.toString(), true, false));
+        }
     }
 
     private void assistanceClick(ItemClickEvent itemClickEvent) {
