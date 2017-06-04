@@ -79,5 +79,49 @@ class ApplicationInit implements CommandLineRunner {
         repository.save(new User(new Role(Role.RoleDefinition.CENTRO), passwordEncoder.encode("centro"), "centro", true));
         repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("domicilio"), "domicilio", true));
         repository.save(new User(new Role(Role.RoleDefinition.ADMIN), passwordEncoder.encode("admin"), "admin", true));
+
+        addPresentationUsers();
+    }
+
+    private void addPresentationUsers() {
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43836363L"), "ADAY_PADILLA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78574353M"), "ALICIA_DIAZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("45981212A"), "ARIADNA_MARTÍN", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43831975R"), "BETSABET_GARCIA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78615754Y"), "CARMEN_DOLORES", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78573805P"), "CECILIA_MARTIN", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("54046019K"), "CRISTINA_SANTOS", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43832253A"), "DÁCIL_GARCIA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78850863D"), "DANIEL_DELGADO", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("79087423Z"), "ELENA_GUIÉRREZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78631365T"), "ESTEFANIA_CORREA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("45981393T"), "ESTELA_MEDINA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78408287E"), "EVA_FARIÑA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43818291W"), "FATIMA_ARMAS", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78852714C"), "GEMA_CHUECA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78701496G"), "IDAIRA_CABRERA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43832292L"), "IRENE_PEREZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43830255Y"), "ITAHISA_COELLO", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78644104B"), "JACOBO_GONZÁLEZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78637134L"), "JEZABEL_HERNANDEZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43381904V"), "JOSUE_HERNANDEZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("54050704Z"), "JUDITH_HERNÁNDEZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("46297645W"), "M_BELEN_SANCHEZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("42098171Y"), "M_ELENA_FELIPE", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("45980375V"), "MAGALI_FRANCHY", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("42065693G"), "MARÍA_CRISTINA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43366258B"), "MARÍA_DOLORES", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78645055M"), "MARÍA_MARTÍN", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78723248K"), "NATALIA_GARCIA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("44787509T"), "NOELIA_PEÑA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("54051676C"), "PRISCILA_CORREA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("44789320V"), "RAFAEL_BECERRA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78555196F"), "ROSA_SAN_NICOLAS", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78710010P"), "SANDRA_GARCIA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("42220217Z"), "SARAY_GONZÁLEZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("79062811N"), "VIOLETA_AFRICA", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("43382595H"), "YASMINA_DIAZ", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("45851703F"), "YERAY_CASTRO", true));
+        repository.save(new User(new Role(Role.RoleDefinition.DOMICILIO), passwordEncoder.encode("78728845Y"), "YUMARA_PADILLA", true));
     }
 }

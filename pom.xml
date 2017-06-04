@@ -13,8 +13,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <version.vaadin>8.0.5</version.vaadin>
-        <vaadin.plugin.version>8.0.0</vaadin.plugin.version>
+        <version.vaadin>8.0.6</version.vaadin>
+        <vaadin.plugin.version>8.0.6</vaadin.plugin.version>
         <start-class>net.leidra.tracker.Application</start-class>
     </properties>
 
