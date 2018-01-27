@@ -1,4 +1,4 @@
-package net.leidra.tracker.web.presenter;
+package net.leidra.tracker.frontend.presenter;
 
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Notification;
@@ -7,9 +7,8 @@ import net.leidra.tracker.backend.Assistance;
 import net.leidra.tracker.backend.Role;
 import net.leidra.tracker.backend.User;
 import net.leidra.tracker.backend.UserRepository;
-import net.leidra.tracker.web.LocationVO;
+import net.leidra.tracker.frontend.dto.LocationVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

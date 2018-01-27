@@ -1,4 +1,4 @@
-package net.leidra.tracker.web;
+package net.leidra.tracker.frontend.ui;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
@@ -19,8 +19,8 @@ import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Grid;
 import com.vaadin.v7.ui.TextField;
 import net.leidra.tracker.backend.*;
-import net.leidra.tracker.web.forms.UserEntryForm;
-import net.leidra.tracker.web.utils.String2LocalDateTimeConverter;
+import net.leidra.tracker.frontend.forms.UserEntryForm;
+import net.leidra.tracker.frontend.utils.String2LocalDateTimeConverter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

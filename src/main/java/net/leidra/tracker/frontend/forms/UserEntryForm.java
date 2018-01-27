@@ -1,4 +1,4 @@
-package net.leidra.tracker.web.forms;
+package net.leidra.tracker.frontend.forms;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
@@ -35,15 +35,16 @@ public class UserEntryForm extends CustomComponent {
     }
 
     protected void createContent(VerticalLayout container) {
+        createUserNameField(container);
+        createPasswordField(container);
+        createEnabledField(container);
+        createRoleField(container);
+
         final BeanFieldGroup<User> fieldGroup = new BeanFieldGroup<>(User.class);
         fieldGroup.setItemDataSource(user);
         fieldGroup.bindMemberFields(this);
         fieldGroup.setBuffered(true);
 
-        createUserNameField(container);
-        createPasswordField(container);
-        createEnabledField(container);
-        createRoleField(container);
         createButtons(container, fieldGroup);
     }
 
@@ -95,9 +96,8 @@ public class UserEntryForm extends CustomComponent {
         role.setNullSelectionAllowed(false);
         role.setNewItemsAllowed(false);
         role.setTextInputAllowed(false);
-        role.select(role.getContainerDataSource().getItemIds().iterator().next());
 
-        role.setValue(Role.create(Role.RoleDefinition.CENTRO));
+        role.setValue(this.user.getRole().getRol());
         HorizontalLayout roleContainer = new HorizontalLayout(role);
         roleContainer.addStyleName("role-container");
         container.addComponent(roleContainer);

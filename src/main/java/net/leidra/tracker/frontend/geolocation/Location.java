@@ -1,4 +1,4 @@
-package net.leidra.tracker.web.geolocation;
+package net.leidra.tracker.frontend.geolocation;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;

@@ -1,4 +1,4 @@
-package net.leidra.tracker.web;
+package net.leidra.tracker.frontend.ui;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;

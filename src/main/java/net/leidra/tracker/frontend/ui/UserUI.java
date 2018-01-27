@@ -1,4 +1,4 @@
-package net.leidra.tracker.web;
+package net.leidra.tracker.frontend.ui;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.server.VaadinRequest;
@@ -9,7 +9,8 @@ import com.vaadin.ui.*;
 import com.vaadin.v7.ui.TextField;
 import net.leidra.tracker.backend.Broadcaster;
 import net.leidra.tracker.backend.User;
-import net.leidra.tracker.web.geolocation.Location;
+import net.leidra.tracker.frontend.presenter.UserPresenter;
+import net.leidra.tracker.frontend.geolocation.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringUI(path = "/user")

@@ -1,4 +1,4 @@
-package net.leidra.tracker.web;
+package net.leidra.tracker.frontend.dto;
 
 /**
  * Created by afuentes on 21/04/2017.

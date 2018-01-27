@@ -1,13 +1,13 @@
-package net.leidra.tracker.web.forms;
+package net.leidra.tracker.frontend.forms;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.*;
 import com.vaadin.v7.ui.PasswordField;
 import com.vaadin.v7.ui.TextField;
-import net.leidra.tracker.web.LocationVO;
-import net.leidra.tracker.web.geolocation.Location;
-import net.leidra.tracker.web.geolocation.LocationError;
+import net.leidra.tracker.frontend.dto.LocationVO;
+import net.leidra.tracker.frontend.geolocation.Location;
+import net.leidra.tracker.frontend.geolocation.LocationError;
 
 import java.util.function.Consumer;
 

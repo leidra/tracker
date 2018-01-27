@@ -2,7 +2,7 @@
  * Created by andyphillips404 on 6/9/15.
  */
 
-window.net_leidra_tracker_web_geolocation_Location = function() {
+window.net_leidra_tracker_frontend_geolocation_Location = function() {
 
     var self = this;
 

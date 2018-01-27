@@ -1,4 +1,4 @@
-package net.leidra.tracker.web.utils;
+package net.leidra.tracker.frontend.utils;
 
 import com.vaadin.v7.data.util.converter.Converter;
 

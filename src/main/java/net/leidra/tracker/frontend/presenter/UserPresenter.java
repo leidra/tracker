@@ -1,4 +1,4 @@
-package net.leidra.tracker.web;
+package net.leidra.tracker.frontend.presenter;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
@@ -6,8 +6,10 @@ import net.leidra.tracker.backend.Assistance;
 import net.leidra.tracker.backend.Role;
 import net.leidra.tracker.backend.User;
 import net.leidra.tracker.backend.UserRepository;
-import net.leidra.tracker.web.geolocation.Location;
-import net.leidra.tracker.web.geolocation.LocationError;
+import net.leidra.tracker.frontend.dto.LocationVO;
+import net.leidra.tracker.frontend.geolocation.Location;
+import net.leidra.tracker.frontend.geolocation.LocationError;
+import net.leidra.tracker.frontend.ui.UserUI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

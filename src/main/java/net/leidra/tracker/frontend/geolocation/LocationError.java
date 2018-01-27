@@ -1,4 +1,4 @@
-package net.leidra.tracker.web.geolocation;
+package net.leidra.tracker.frontend.geolocation;
 
 /**
  * Created by andyphillips404 on 6/9/15.

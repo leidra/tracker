@@ -1,14 +1,14 @@
-package net.leidra.tracker.web;
+package net.leidra.tracker.frontend.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
-import net.leidra.tracker.web.forms.LoginForm;
-import net.leidra.tracker.web.presenter.LoginPresenter;
+import net.leidra.tracker.frontend.dto.LocationVO;
+import net.leidra.tracker.frontend.forms.LoginForm;
+import net.leidra.tracker.frontend.presenter.LoginPresenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
 

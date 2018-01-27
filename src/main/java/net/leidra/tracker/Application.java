@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,7 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -27,26 +27,37 @@ import javax.annotation.Resource;
 @SpringBootApplication
 @EnableJpaRepositories
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
-public class Application extends WebSecurityConfigurerAdapter {
-    @Resource(name = "authService")
-    private UserDetailsService userDetailsService;
+public class Application extends SpringBootServletInitializer {
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
+}
+
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
+class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+    @Resource(name = "authService")
+    private UserDetailsService userDetailsService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
 //                .addFilter(new SecurityContextPersistenceFilter())
-                .exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")).accessDeniedPage("/accessDenied")
+                .exceptionHandling()
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+                .accessDeniedPage("/accessDenied")
                 .and().authorizeRequests()
                 .antMatchers("/VAADIN/**", "/PUSH/**", "/UIDL/**", "/login", "/login/**", "/error/**", "/accessDenied/**", "/vaadinServlet/**").permitAll()
                 .antMatchers("/user", "/**").hasAnyAuthority(Role.RoleDefinition.CENTRO.toString(),
-                                                            Role.RoleDefinition.DOMICILIO.toString(),
-                                                            Role.RoleDefinition.ADMIN.toString())
+                Role.RoleDefinition.DOMICILIO.toString(),
+                Role.RoleDefinition.ADMIN.toString())
                 .antMatchers("/admin", "/**").hasAuthority(Role.RoleDefinition.ADMIN.toString())
         ;//.and().sessionManagement().sessionFixation().newSession();
     }
@@ -65,6 +76,9 @@ public class Application extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    public static void main(String... args) {
+        System.out.println(new BCryptPasswordEncoder().encode("acufade"));
+    }
 }
 
 @Component
