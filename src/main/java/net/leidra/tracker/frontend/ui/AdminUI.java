@@ -20,12 +20,13 @@ import com.vaadin.v7.ui.Grid;
 import com.vaadin.v7.ui.TextField;
 import net.leidra.tracker.backend.*;
 import net.leidra.tracker.frontend.forms.UserEntryForm;
+import net.leidra.tracker.frontend.utils.Features;
 import net.leidra.tracker.frontend.utils.String2LocalDateTimeConverter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.vaadin.dialogs.ConfirmDialog;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class AdminUI extends AbstractUI {
 
     private User editingUser;
 
-    private Grid list = new Grid(new BeanItemContainer<>(User.class));
+    private Grid usersGrid = new Grid(new BeanItemContainer<>(User.class));
 
     private Button addNew = new Button("Añadir", this::add);
     private Button edit = new Button("Editar", this::edit);
@@ -77,31 +78,31 @@ public class AdminUI extends AbstractUI {
 
         CssLayout listContainer = new CssLayout();
         listContainer.addStyleName("list-container");
-        listContainer.addComponent(list);
+        listContainer.addComponent(usersGrid);
         return listContainer;
     }
 
     private void createUsersGrid() {
-        list.setColumns("username", "role", "enabled");
+        usersGrid.setColumns("username", "role", "enabled");
 
         createUsernameFilter();
 
-        list.setDetailsGenerator(rowReference -> {
+        usersGrid.setDetailsGenerator(rowReference -> {
             User user = (User)rowReference.getItemId();
             return createAssitancesGrid(user);
         });
-        list.addItemClickListener((ItemClickEvent.ItemClickListener) event -> userClick(event));
-        list.setColumnOrder("username", "role", "enabled");
-        list.getColumn("role").setHeaderCaption("Rol");
-        list.getColumn("enabled").setHeaderCaption("Habilitado").setConverter(new StringToBooleanConverter("Sí", "No"));
-        list.setSizeFull();
-        list.setSelectionMode(Grid.SelectionMode.SINGLE);
-        list.addSelectionListener(e -> adjustActionButtonState());
-        list.setHeightMode(HeightMode.ROW);
+        usersGrid.addItemClickListener((ItemClickEvent.ItemClickListener) event -> userClick(event));
+        usersGrid.setColumnOrder("username", "role", "enabled");
+        usersGrid.getColumn("role").setHeaderCaption("Rol");
+        usersGrid.getColumn("enabled").setHeaderCaption("Habilitado").setConverter(new StringToBooleanConverter("Sí", "No"));
+        usersGrid.setSizeFull();
+        usersGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        usersGrid.addSelectionListener(e -> adjustActionButtonState());
+        usersGrid.setHeightMode(HeightMode.ROW);
     }
 
     private void createUsernameFilter() {
-        Grid.HeaderRow filterRow = list .getDefaultHeaderRow();
+        Grid.HeaderRow filterRow = usersGrid.getDefaultHeaderRow();
         TextField textField = new TextField();
         textField.addStyleName("column-filter");
         textField.setImmediate(true);
@@ -116,7 +117,7 @@ public class AdminUI extends AbstractUI {
         if (event.isDoubleClick()) {
             User itemId = (User)event.getItemId();
             if(!itemId.getAssistances().isEmpty() && !Role.RoleDefinition.ADMIN.equals(itemId.getRole().getRol())) {
-                list.setDetailsVisible(itemId, !list.isDetailsVisible(itemId));
+                usersGrid.setDetailsVisible(itemId, !usersGrid.isDetailsVisible(itemId));
             }
         }
     }
@@ -218,33 +219,41 @@ public class AdminUI extends AbstractUI {
         return event -> {
             String newValue = (String) event.getText();
             @SuppressWarnings("unchecked")
-            BeanItemContainer<User> container = ((BeanItemContainer<User>) list.getContainerDataSource());
+            BeanItemContainer<User> container = ((BeanItemContainer<User>) usersGrid.getContainerDataSource());
             // This is important, this removes the previous filter
             // that was used to filter the container
             container.removeContainerFilters("username");
             if (null != newValue && !newValue.isEmpty()) {
                 container.addContainerFilter(new SimpleStringFilter("username", newValue, true, false));
             }
-            list.recalculateColumnWidths();
+            usersGrid.recalculateColumnWidths();
         };
     }
 
     protected void adjustActionButtonState() {
-        boolean hasSelection = list.getSelectedRow() != null;
+        boolean hasSelection = usersGrid.getSelectedRow() != null;
         edit.setEnabled(hasSelection);
         delete.setEnabled(hasSelection);
-        location.setEnabled(hasSelection && isDomicilio());
+        location.setVisible(enableRequestLocationButton(hasSelection));
+    }
+
+    private boolean enableRequestLocationButton(boolean hasSelection) {
+        return isRequestLocationEnabled() && hasSelection && isDomicilio();
+    }
+
+    private boolean isRequestLocationEnabled() {
+        return getFeatures().contains(Features.REQUEST_LOCATION.encode());
     }
 
     private Boolean isDomicilio() {
-        return Role.RoleDefinition.DOMICILIO.equals(((User)list.getSelectedRow()).getRole().getRol());
+        return Role.RoleDefinition.DOMICILIO.equals(((User) usersGrid.getSelectedRow()).getRole().getRol());
     }
 
     private void listEntities() {
-        list.getContainerDataSource().removeAllItems();
-        repo.findAll().stream().forEach(list.getContainerDataSource()::addItem);
+        usersGrid.getContainerDataSource().removeAllItems();
+        repo.findAll().stream().forEach(usersGrid.getContainerDataSource()::addItem);
         adjustActionButtonState();
-        list.clearSortOrder();
+        usersGrid.clearSortOrder();
     }
 
     public void add(ClickEvent clickEvent) {
@@ -257,14 +266,14 @@ public class AdminUI extends AbstractUI {
     }
 
     public void edit(ClickEvent e) {
-        edit((User)list.getSelectedRow());
+        edit((User) usersGrid.getSelectedRow());
     }
 
     public void remove(ClickEvent e) {
         ConfirmDialog.show(getUI(), "Borrar usuario", "¿Está seguro de borrar este usuario?",
                 "Sí", "No", ()-> {
-            repo.delete((User)list.getSelectedRow());
-            list.select(null);
+            repo.delete((User) usersGrid.getSelectedRow());
+            usersGrid.select(null);
             listEntities();
         });
     }
@@ -307,8 +316,8 @@ public class AdminUI extends AbstractUI {
     protected void closeWindow() {
         getWindows().stream().forEach(w -> {
             User user = ((UserEntryForm) w.getContent()).getUser();
-            if(list.getContainerDataSource().containsId(user)) {
-                list.select(user);
+            if(usersGrid.getContainerDataSource().containsId(user)) {
+                usersGrid.select(user);
             }
             removeWindow(w);
         });
@@ -316,7 +325,7 @@ public class AdminUI extends AbstractUI {
     }
 
     private void location(ClickEvent clickEvent) {
-        User user = (User)list.getSelectedRow();
+        User user = (User) usersGrid.getSelectedRow();
         if(user != null && Role.RoleDefinition.DOMICILIO.equals(user.getRole().getRol())) {
             access(() -> {
                 Broadcaster.broadcast(user);

@@ -12,7 +12,11 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.UI;
 import com.vaadin.v7.shared.ui.label.ContentMode;
 import com.vaadin.v7.ui.Label;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.List;
 
 /**
  * Created by afuentes on 26/04/2017.
@@ -22,6 +26,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Push(value = PushMode.MANUAL, transport = Transport.LONG_POLLING)
 @Widgetset("AppWidgetset")
 public abstract class AbstractUI extends UI {
+    @Value("#{'${net.leidra.tracker.features}'.split('\"')}")
+    protected List<String> features;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     protected CssLayout createHeaderContainer() {
         CssLayout headerContainer = new CssLayout();
@@ -64,4 +73,7 @@ public abstract class AbstractUI extends UI {
         return new CssLayout();
     }
 
+    public List<String> getFeatures() {
+        return features;
+    }
 }
